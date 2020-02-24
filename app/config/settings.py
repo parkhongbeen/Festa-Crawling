@@ -21,7 +21,7 @@ secretsManager = session.client(
     service_name='secretsmanager',
     region_name='ap-northeast-2'
 )
-SECRETS = json.loads(secretsManager.get_secret_value(SecretId='s3sm2')['SecretString'])
+SECRETS = json.loads(secretsManager.get_secret_value(SecretId='festa_smanager')['SecretString'])
 
 """ S3 사용을 위한 설정"""
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
