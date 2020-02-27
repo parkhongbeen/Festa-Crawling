@@ -13,8 +13,13 @@ RUN     pip install -r /tmp/requirements.txt
 
 # docker container 의 /srv/에 Fest-Crawling 복사
 COPY    . /srv/Festa-crawling
+WORKDIR     /srv/Festa-crawling/app
 
-#RUN     rm /etc/nginx/sites-enabled/default
-#RUN     cp /srv/Festa-crawling/.config/festa.nginx /etc/nginx/sites-enabled/
+# sites-enabled/defualt파일은 welcome to nginx 파일이다
+RUN     rm /etc/nginx/sites-enabled/default
+
+# nginx 설정 파일을 복사. /etc/nginx/sites-eanabled로 전달
+RUN     cp /srv/Festa-crawling/.config/festa.nginx /etc/nginx/sites-enabled/
+
 
 CMD     /bin/bash

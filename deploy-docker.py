@@ -5,7 +5,7 @@ import os
 
 IP = "15.165.204.55"
 HOST = "ubuntu"
-TARGET = f'{HOST}@IP'  # ubuntu@15.165.204.55
+TARGET = f'{HOST}@{IP}'  # ubuntu@15.165.204.55
 HOME = str(Path.home())  # "/Users/hongbeen"
 SSH_KEY = os.path.join(HOME, '.ssh', 'festa.pem')
 PROJECT_FILE = os.path.join(HOME, 'projects', 'wps12th', 'Festa-crawling')
@@ -58,7 +58,7 @@ def server_pull_run():
     # 가져온 이미지를 실행
     ssh_run('sudo docker run {options} {tag} /bin/bash'.format(
         options=' '.join([
-            f'{key}{value}' for key, value in DOCKER_OPTIONS
+            f'{key} {value}' for key, value in DOCKER_OPTIONS
         ]),
         tag=DOCKER_IMAGE_TAG
     ))
@@ -72,9 +72,11 @@ def copy_server():
     ssh_run(f'sudo docker cp /tmp/credentials festa_container:/root/.aws')
 
 
+# 자동실행중인 nginx를 끄기 - 정적파일모아주기 - supervisord로 gunicorn이랑nginx실행
 def server_cmd():
-
-
+    ssh_run(f'sudo docker exec festa_container /user/sbin/nginx -s stop', ignore_error=True)
+    ssh_run(f'sudo docker exec festa_container python manage.py collectstatic --noinput')
+    ssh_run(f'sudo docker exec festa_container supervisord -c /srv/Festa-crawling/.config/supervisord.conf -n')
 
 
 if __name__ == '__main__':
@@ -89,5 +91,5 @@ if __name__ == '__main__':
         print('cmd: ', e.cmd)
         print('return code: ', e.returncode)
         print('output: ', e.output)
-        print('stdput: ', e.stdput)
-        print('stdput: ', e.stderr)
+        print('stdout: ', e.stdout)
+        print('stderr: ', e.stderr)
