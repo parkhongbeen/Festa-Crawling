@@ -4,8 +4,22 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os
+from pathlib import Path
 
 from scrapy import signals
+from scrapy.http import HtmlResponse
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+HOME = str(Path.home())
+
+CHROME_DRIVER = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app', 'festascraper', 'festascraper',
+                             'chromedriver')
+
+driver = webdriver.Chrome(CHROME_DRIVER)
 
 
 class FestascraperSpiderMiddleware(object):
@@ -68,7 +82,7 @@ class FestascraperDownloaderMiddleware(object):
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
-    def process_request(self, request, spider):
+    def process_request(self, request, spider, response):
         # Called for each request that goes through the downloader
         # middleware.
 
@@ -78,7 +92,15 @@ class FestascraperDownloaderMiddleware(object):
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+        if request.url != 'https://www.festa.io':
+            return None
+
+        driver.get(request.url)
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//p[@data-a-target='carousel-broadcaster-displayname']"))
+        )
+        body = driver.page_source
+        return HtmlResponse(driver.current_url, body=body, encoding='utf-8', request=request)
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
@@ -87,7 +109,7 @@ class FestascraperDownloaderMiddleware(object):
         # - return a Response object
         # - return a Request object
         # - or raise IgnoreRequest
-        return response
+        return driver.get(response.url)
 
     def process_exception(self, request, exception, spider):
         # Called when a download handler or a process_request()
