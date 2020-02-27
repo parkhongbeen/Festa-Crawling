@@ -11,4 +11,8 @@ import scrapy
 class FestascraperItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    title = scrapy.Field()
+    organizer = scrapy.Field()
+    date = scrapy.Field()
+    time = scrapy.Field()
+    image = scrapy.Field()
