@@ -20,6 +20,7 @@ boto3 = "^1.12.4"
 scrapy = "^1.8.0"
 psycopg2-binary = "^2.8.4"
 supervisor = "^4.1.0"
+selenium = "^3.141.0"
 
 [tool.poetry.dev-dependencies]
 
