@@ -1,15 +1,20 @@
 import scrapy
-from selenium import webdriver
+
+
+# from app.config.settings import BASE_DIR
+
+# CHROME_DRIVER = os.path.join(BASE_DIR, 'festascraper', 'festascraper', 'chromedriver')
 
 
 class QuotesSpider(scrapy.Spider):
-    name = "quotes"
+    name = "festa-spider"
     start_urls = [
         'https://festa.io',
     ]
 
-    def __init__(self):
-        self.driver = webdriver.Chrome()
+    def parse(self, response):
+        title = response.css('h3.lpbKDy::text').getall()
 
-    def parse(self):
-        test = response.css('h3.cpLyAa::text').getall()
+        yield {
+            'title': title
+        }
