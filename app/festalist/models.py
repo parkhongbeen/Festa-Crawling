@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-from app.members.models import User
+from members.models import User
 
 
 class FestaList(models.Model):

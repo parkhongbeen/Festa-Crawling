@@ -14,6 +14,9 @@ import json
 import boto3
 import os
 
+
+AUTH_USER_MODEL = 'members.User'
+
 # credential --> 사용자 인증
 # 1. 사용자 인증 (boto3가 사용자 인증 방법을 알아서 찾아줌. 우리는 ~/.aws/credentials 파일을 이용)
 session = boto3.Session(profile_name="festa-secrets-manager")
@@ -43,7 +46,6 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 STATIC_ROOT = os.path.join(ROOT_DIR, ".static")
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
-AUTH_USER_MODEL = 'members.User'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
