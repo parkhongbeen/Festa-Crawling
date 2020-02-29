@@ -19,7 +19,7 @@ HOME = str(Path.home())
 CHROME_DRIVER = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app', 'festascraper', 'festascraper',
                              'chromedriver')
 
-driver = webdriver.Chrome(CHROME_DRIVER)
+driver = webdriver.Chrome(executable_path=CHROME_DRIVER)
 
 
 class FestascraperSpiderMiddleware(object):
@@ -97,7 +97,7 @@ class FestascraperDownloaderMiddleware(object):
 
         driver.get(request.url)
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//p[@data-a-target='carousel-broadcaster-displayname']"))
+            EC.presence_of_element_located((By.CLASS_NAME,'cpLyAa'))
         )
         body = driver.page_source
         return HtmlResponse(driver.current_url, body=body, encoding='utf-8', request=request)
