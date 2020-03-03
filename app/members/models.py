@@ -3,4 +3,4 @@ from django.db import models
 
 
 class User(AbstractUser):
-    name = models.CharField(max_length=50, blank=True)
+    name = models.CharField('이름', max_length=50, blank=True)
