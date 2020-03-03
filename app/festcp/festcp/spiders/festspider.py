@@ -7,6 +7,8 @@ import scrapy
 from scrapy import Selector
 from selenium import webdriver
 
+from festcp.items import FestcpItem
+
 HOME = str(Path.home())
 CHROME_DRIVER = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app', 'festcp', 'festcp',
                              'chromedriver')
@@ -32,7 +34,6 @@ class QuotesSpider(scrapy.Spider):
         time.sleep(5)
         html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
-
         details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()
 
         for detail in details:
@@ -63,20 +64,31 @@ class QuotesSpider(scrapy.Spider):
                 price = ticket_selector.xpath('//span[contains(@class, "PriceSpan")]/text()').extract()[0]
                 tickets.append((customer, price))
 
-            item = {
-                'title': title,
-                'image': image,
-                'host': host,
-                'date': date,
-                'content': content,
-                'apply': apply,
-                # 'link': link,
-                'tickets': tickets,
-            }
+            # item = {
+            #     'title': title,
+            #     'image': image,
+            #     'host': host,
+            #     'date': date,
+            #     'content': content,
+            #     'apply': apply,
+            #     # 'link': link,
+            #     'tickets': tickets,
+            # }
+            #
+            # data.append(item)
 
-            data.append(item)
+        # yield {
+        #     'data': data
+        # }
 
-        yield {
-            'data': data
-        }
+            # 데이터베이스에 넣기
+            item = FestcpItem()
+            item['title'] = title
+            item['image'] = image
+            item['host'] = host
+            item['date'] = date
+            item['content'] = content
+            item['apply'] = apply
+            item['tickets'] = tickets
+            yield item
         self.driver.close()
