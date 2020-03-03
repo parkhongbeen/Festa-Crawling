@@ -6,13 +6,14 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
+from scrapy_djangoitem import DjangoItem
 
 
-class FestascraperItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
+class FestcpItem(DjangoItem):
     title = scrapy.Field()
-    organizer = scrapy.Field()
-    date = scrapy.Field()
-    time = scrapy.Field()
     image = scrapy.Field()
+    host = scrapy.Field()
+    date = scrapy.Field()
+    content = scrapy.Field()
+    apply = scrapy.Field()
+    tickets = scrapy.Field()

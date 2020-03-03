@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for festascraper project
+# Scrapy settings for festcp project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -8,14 +8,25 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os
+import sys
+from pathlib import Path
+import django
 
-BOT_NAME = 'festascraper'
+HOME = str(Path.home())
+PROJECT = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app')
+sys.path.insert(0,PROJECT)
+#
+os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
+django.setup()
 
-SPIDER_MODULES = ['festascraper.spiders']
-NEWSPIDER_MODULE = 'festascraper.spiders'
+BOT_NAME = 'festcp'
+
+SPIDER_MODULES = ['festcp.spiders']
+NEWSPIDER_MODULE = 'festcp.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Chrome/80.0.3987.122'
+# USER_AGENT = 'festcp (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -38,21 +49,21 @@ ROBOTSTXT_OBEY = True
 # TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-DEFAULT_REQUEST_HEADERS = {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'en',
-}
+# DEFAULT_REQUEST_HEADERS = {
+#   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+#   'Accept-Language': 'en',
+# }
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 # SPIDER_MIDDLEWARES = {
-#    'festascraper.middlewares.FestascraperSpiderMiddleware': 543,
+#    'festcp.middlewares.FestcpSpiderMiddleware': 543,
 # }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 # DOWNLOADER_MIDDLEWARES = {
-#    'festascraper.middlewares.FestascraperDownloaderMiddleware': 543,
+#    'festcp.middlewares.FestcpDownloaderMiddleware': 543,
 # }
 
 # Enable or disable extensions
@@ -63,9 +74,9 @@ DEFAULT_REQUEST_HEADERS = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    'festascraper.pipelines.FestascraperPipeline': 300,
-# }
+ITEM_PIPELINES = {
+    'festcp.pipelines.FestcpPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -87,5 +98,3 @@ DEFAULT_REQUEST_HEADERS = {
 # HTTPCACHE_DIR = 'httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-
-FEED_EXPORT_ENCODING = 'utf-8'
