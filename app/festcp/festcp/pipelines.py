@@ -9,7 +9,13 @@ from festalist.models import FestaList
 
 class FestcpPipeline(object):
     def process_item(self, item, spider):
-        question = FestaList()
-        question.title = item['title']
-        question.save()
+        festa = FestaList()
+        festa.title = item['title']
+        festa.image = item['image']
+        festa.host = item['host']
+        festa.date = item['date']
+        festa.content = item['content']
+        festa.apply = item['apply']
+        festa.tickets = item['tickets']
+        festa.save()
         return item
