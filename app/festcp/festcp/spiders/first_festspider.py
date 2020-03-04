@@ -16,7 +16,7 @@ CHROME_DRIVER = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app
 
 
 class QuotesSpider(scrapy.Spider):
-    name = "festa-spider"
+    name = "festa-first-spider"
     start_urls = [
         'https://www.festa.io/events/',
     ]
@@ -32,19 +32,31 @@ class QuotesSpider(scrapy.Spider):
         self.driver.get(response.url)
         time.sleep(5)
 
+        # ------------------------------- 무한스크롤 -------------------------------
+
+        SCROLL_PAUSE_TIME = 2
+
+        last_height = self.driver.execute_script("return document.body.scrollHeight")
+
+        while True:
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+            time.sleep(SCROLL_PAUSE_TIME)
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight-50);")
+            time.sleep(SCROLL_PAUSE_TIME)
+
+            new_height = self.driver.execute_script("return document.body.scrollHeight")
+
+            if new_height == last_height:
+                break
+
+            last_height = new_height
+
+        # ------------------------------- 무한스크롤 -------------------------------
+
         html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
         details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()
-
-        # 비교를 위해 마지막 데이터를 가져옴
-        last_festa = FestaList.objects.last()
-        last_title = last_festa.title
-        last_date = last_festa.date
-
-        titles = selector.xpath('//h3[contains(@class, "Mobile")]/text()').extract()
-        for idx, title in enumerate(titles):
-            if title[:-3] in last_title:
-                details = details[:idx]
 
         details.reverse()
         for detail in details:
@@ -58,10 +70,6 @@ class QuotesSpider(scrapy.Spider):
 
             title = detail_selector.xpath('//h1[contains(@class, "Heading")]/text()').extract()[0]
             date = detail_selector.xpath('//div[contains(@class, "TextBlock")]/text()').extract()[1]
-
-            # 넣으려고 하는 데이터랑 기존의 마지막 데이터가 같으면 그만하도록 함
-            if title == last_title and date == last_date:
-                break
 
             image = detail_selector.xpath('//div[contains(@class, "MainImage")]/@src').extract()[0]
             try:
