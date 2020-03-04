@@ -1,7 +1,8 @@
 import os
-import scrapy
 import time
 from pathlib import Path
+
+import scrapy
 from scrapy import Selector
 from selenium import webdriver
 
@@ -24,10 +25,33 @@ class QuotesSpider(scrapy.Spider):
             self.driver = webdriver.Chrome()
 
     def parse(self, response):
-        data = []
-
         self.driver.get(response.url)
         time.sleep(5)
+
+        SCROLL_PAUSE_TIME = 2
+
+        # Get scroll height
+        last_height = self.driver.execute_script("return document.body.scrollHeight")
+
+        while True:
+            # Scroll down to bottom
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+            # Wait to load page
+            time.sleep(SCROLL_PAUSE_TIME)
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight-50);")
+            time.sleep(SCROLL_PAUSE_TIME)
+
+            # Calculate new scroll height and compare with last scroll height
+            new_height = self.driver.execute_script("return document.body.scrollHeight")
+
+            if new_height == last_height:
+                break
+
+            last_height = new_height
+
+        data = []
+
         html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
         details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()
@@ -50,15 +74,32 @@ class QuotesSpider(scrapy.Spider):
             date = detail_selector.xpath('//div[contains(@class, "TextBlock")]/text()').extract()[1]
             content = detail_selector.xpath('//div[contains(@class, "UserContentArea")]').extract()[0]
             apply = detail_selector.xpath('//*[contains(@class, "ButtonNew")]/text()').extract()[0]
-            tickets_wrap = selector.xpath('//div[contains(@class, "TicketWrapper")]').extract()
+            tickets_wrap = detail_selector.xpath('//div[contains(@class, "TicketWrapper")]').extract()
             for i, ticket in enumerate(tickets_wrap):
                 if i + 1 > len(tickets_wrap) / 2:
                     break
 
                 ticket_selector = Selector(text=ticket)
-                customer = ticket_selector.xpath('//p[contains(@class, "TicketDesc")]/text()').extract()[0]
+                customer = ticket_selector.xpath('//span[contains(@class, "TicketName")]/text()').extract()[0]
                 price = ticket_selector.xpath('//span[contains(@class, "PriceSpan")]/text()').extract()[0]
-                tickets.append((customer, price))
+                ticket_tuple = (customer, price)
+                tickets.append(ticket_tuple)
+
+            if apply == '이벤트 신청(외부등록)':
+                button = self.driver.find_element_by_css_selector('button')
+                self.driver.execute_script("arguments[0].click();", button)
+                self.driver.switch_to_window(self.driver.window_handles[1])
+                time.sleep(3)
+                self.driver.switch_to_window(self.driver.window_handles[0])
+                time.sleep(3)
+                self.driver.switch_to_window(self.driver.window_handles[1])  # alert 처리
+                link = self.driver.current_url
+
+                self.driver.close()
+                self.driver.switch_to_window(self.driver.window_handles[0])
+
+            else:
+                link = ''
 
             item = {
                 'title': title,
@@ -67,8 +108,8 @@ class QuotesSpider(scrapy.Spider):
                 'date': date,
                 'content': content,
                 'apply': apply,
-                # 'link': link,
                 'tickets': tickets,
+                'link': link,
             }
 
             data.append(item)
