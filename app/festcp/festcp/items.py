@@ -17,3 +17,4 @@ class FestcpItem(DjangoItem):
     content = scrapy.Field()
     apply = scrapy.Field()
     tickets = scrapy.Field()
+    link = scrapy.Field()

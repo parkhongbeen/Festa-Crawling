@@ -14,3 +14,4 @@ class FestaList(models.Model):
     content = models.CharField(max_length=150, blank=True)
     apply = models.CharField(max_length=150, blank=True)
     tickets = models.CharField(max_length=150, blank=True)
+    link = models.CharField(max_length=150, blank=True)
