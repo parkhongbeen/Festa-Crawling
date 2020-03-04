@@ -10,9 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 import json
+import os
 
 import boto3
-import os
 
 
 AUTH_USER_MODEL = 'members.User'
@@ -60,6 +60,13 @@ ALLOWED_HOSTS = [
     '*',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -69,10 +76,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'festalist.apps.FestalistConfig',
     'members.apps.MembersConfig',
     'django_extensions',
+    'rest_framework',
+    'rest_framework.authtoken',
+
+    # 서드 파티
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.naver',
 ]
 
 MIDDLEWARE = [
@@ -98,6 +116,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -136,6 +155,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# 장고 백엔드
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+SITE_ID = 1
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 로그인 인증 방법
+ACCOUNT_EMAIL_REQUIRED = True  # 회원가입시 이메일 입력 필수 여부
+ACCOUNT_USERNAME_REQUIRED = False  # 회웝가입시 아이디 입력 필수 여부
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
+SOCIALACCOUNT_AUTO_SIGNUP = False
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+ACCOUNT_UNIQUE_EMAIL = True
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -148,3 +186,5 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# user 를 생성할때 User.objects.create_user() 를 해줘야한다. 안그러면 인증할때 인증할 수 없다.

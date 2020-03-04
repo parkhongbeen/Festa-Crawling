@@ -21,6 +21,8 @@ scrapy = "^1.8.0"
 psycopg2-binary = "^2.8.4"
 supervisor = "^4.1.0"
 selenium = "^3.141.0"
+scrapy-djangoitem = "^1.1.1"
+django-allauth = "^0.41.0"
 
 [tool.poetry.dev-dependencies]
 

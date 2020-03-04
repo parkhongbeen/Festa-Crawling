@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import time
 from pathlib import Path
@@ -6,8 +7,10 @@ import scrapy
 from scrapy import Selector
 from selenium import webdriver
 
+from festcp.items import FestcpItem
+
 HOME = str(Path.home())
-CHROME_DRIVER = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app', 'festascraper', 'festascraper',
+CHROME_DRIVER = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app', 'festcp', 'festcp',
                              'chromedriver')
 
 
@@ -49,8 +52,6 @@ class QuotesSpider(scrapy.Spider):
                 break
 
             last_height = new_height
-
-        data = []
 
         html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
@@ -101,20 +102,16 @@ class QuotesSpider(scrapy.Spider):
             else:
                 link = ''
 
-            item = {
-                'title': title,
-                'image': image,
-                'host': host,
-                'date': date,
-                'content': content,
-                'apply': apply,
-                'tickets': tickets,
-                'link': link,
-            }
+            # 데이터베이스에 넣기
+            item = FestcpItem()
+            item['title'] = title
+            item['image'] = image
+            item['host'] = host
+            item['date'] = date
+            item['content'] = content
+            item['apply'] = apply
+            item['tickets'] = tickets
+            item['link'] = link
+            yield item
 
-            data.append(item)
-
-        yield {
-            'data': data
-        }
         self.driver.close()
