@@ -17,5 +17,6 @@ class FestcpPipeline(object):
         festa.content = item['content']
         festa.apply = item['apply']
         festa.tickets = item['tickets']
+        festa.link = item['link']
         festa.save()
         return item
