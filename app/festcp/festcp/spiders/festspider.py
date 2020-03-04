@@ -33,25 +33,25 @@ class QuotesSpider(scrapy.Spider):
 
         SCROLL_PAUSE_TIME = 2
 
-        # Get scroll height
-        last_height = self.driver.execute_script("return document.body.scrollHeight")
+        # ------------------------------- 무한스크롤 -------------------------------
 
-        while True:
-            # Scroll down to bottom
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        # last_height = self.driver.execute_script("return document.body.scrollHeight")
+        #
+        # while True:
+        #     self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        #
+        #     time.sleep(SCROLL_PAUSE_TIME)
+        #     self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight-50);")
+        #     time.sleep(SCROLL_PAUSE_TIME)
+        #
+        #     new_height = self.driver.execute_script("return document.body.scrollHeight")
+        #
+        #     if new_height == last_height:
+        #         break
+        #
+        #     last_height = new_height
 
-            # Wait to load page
-            time.sleep(SCROLL_PAUSE_TIME)
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight-50);")
-            time.sleep(SCROLL_PAUSE_TIME)
-
-            # Calculate new scroll height and compare with last scroll height
-            new_height = self.driver.execute_script("return document.body.scrollHeight")
-
-            if new_height == last_height:
-                break
-
-            last_height = new_height
+        # ------------------------------- 무한스크롤 -------------------------------
 
         html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
@@ -85,6 +85,10 @@ class QuotesSpider(scrapy.Spider):
                 price = ticket_selector.xpath('//span[contains(@class, "PriceSpan")]/text()').extract()[0]
                 ticket_tuple = (customer, price)
                 tickets.append(ticket_tuple)
+
+            tickets = ', '.join([
+                f'({ticket[0]}, {ticket[1]})' for ticket in tickets
+            ])
 
             if apply == '이벤트 신청(외부등록)':
                 button = self.driver.find_element_by_css_selector('button')
