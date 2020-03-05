@@ -8,7 +8,7 @@ from members.models import User
 class FestaList(models.Model):
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=150, blank=True)
-    image = models.ImageField(blank=True)
+    image = models.CharField(max_length=150,blank=True)
     host = models.CharField(max_length=150, blank=True)
     date = models.CharField(max_length=150, blank=True)
     content = models.CharField(max_length=150, blank=True)

@@ -17,7 +17,6 @@ from django.urls import path, include
 
 urlpatterns_api = [
     path('members/', include('members.urls')),
-    path('festalist/', include('festalist.urls'))
 ]
 
 urlpatterns = [
