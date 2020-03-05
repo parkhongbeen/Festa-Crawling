@@ -35,16 +35,6 @@ class QuotesSpider(scrapy.Spider):
         selector = Selector(text=html)
         details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()[:10]
 
-        # 비교를 위해 마지막 데이터를 가져옴
-        # last_festa = FestaList.objects.last()
-        # last_title = last_festa.title
-        # last_date = last_festa.date
-
-        # titles = selector.xpath('//h3[contains(@class, "Mobile")]/text()').extract()
-        # for idx, title in enumerate(titles):
-        #     if title[:-3] in last_title:
-        #         details = details[:idx]
-
         events = FestaList.objects.order_by('-pk')[:10]
         event_titles = [event.title for event in events]
         event_dates = [event.date for event in events]
@@ -61,10 +51,6 @@ class QuotesSpider(scrapy.Spider):
 
             title = detail_selector.xpath('//h1[contains(@class, "Heading")]/text()').extract()[0]
             date = detail_selector.xpath('//div[contains(@class, "TextBlock")]/text()').extract()[1]
-
-            # 넣으려고 하는 데이터랑 기존의 마지막 데이터가 같으면 그만하도록 함
-            # if title == last_title and date == last_date:
-            #     break
 
             if title in event_titles and date in event_dates:
                 if event_titles.index(title) == event_dates.index(date):
