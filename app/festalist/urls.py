@@ -1,11 +1,10 @@
 from django.urls import include, path
-from festalist.apis import api_view
 
-app_name = 'festalist'
+from festalist.apis import FestaListAPIView, FestaListDetailAPIView
 
 urlpatterns_api_view = [
-    path('festalist/', api_view.SnippetListCreateAPIView.as_view()),
-    path('festalist/<int:pk>/', api_view.SnippetRetrieveUpdateDestroyAPIView.as_view()),
+    path('festalist/', FestaListAPIView.as_view()),
+    path('festalist/<int:pk>/', FestaListDetailAPIView.as_view()),
 ]
 
 urlpatterns = [
