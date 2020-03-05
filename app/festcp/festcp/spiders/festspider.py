@@ -37,14 +37,14 @@ class QuotesSpider(scrapy.Spider):
         details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()
 
         # 비교를 위해 마지막 데이터를 가져옴
-        last_festa = FestaList.objects.last()
-        last_title = last_festa.title
-        last_date = last_festa.date
-
-        titles = selector.xpath('//h3[contains(@class, "Mobile")]/text()').extract()
-        for idx, title in enumerate(titles):
-            if title[:-3] in last_title:
-                details = details[:idx]
+        # last_festa = FestaList.objects.last()
+        # last_title = last_festa.title
+        # last_date = last_festa.date
+        #
+        # titles = selector.xpath('//h3[contains(@class, "Mobile")]/text()').extract()
+        # for idx, title in enumerate(titles):
+        #     if title[:-3] in last_title:
+        #         details = details[:idx]
 
         details.reverse()
         for detail in details:
@@ -60,8 +60,8 @@ class QuotesSpider(scrapy.Spider):
             date = detail_selector.xpath('//div[contains(@class, "TextBlock")]/text()').extract()[1]
 
             # 넣으려고 하는 데이터랑 기존의 마지막 데이터가 같으면 그만하도록 함
-            if title == last_title and date == last_date:
-                break
+            # if title == last_title and date == last_date:
+            #     break
 
             image = detail_selector.xpath('//div[contains(@class, "MainImage")]/@src').extract()[0]
             try:
