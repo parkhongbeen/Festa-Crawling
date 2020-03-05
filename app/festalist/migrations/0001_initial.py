@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
                 ('content', models.CharField(blank=True, max_length=150)),
                 ('apply', models.CharField(blank=True, max_length=150)),
                 ('tickets', models.CharField(blank=True, max_length=150)),
+                ('link', models.CharField(blank=True, max_length=150)),
             ],
         ),
     ]
