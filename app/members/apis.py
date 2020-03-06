@@ -5,10 +5,10 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-# 사용자로그인 --> 아이디/비번/이메일 전달 --> 유효 검사후 토큰 반환
 from members.serializers import UserSerializer
 
 
+# 사용자로그인 --> 아이디/비번/이메일 전달 --> 유효 검사후 토큰 반환
 class AuthTokenAPIView(APIView):
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
@@ -33,6 +33,13 @@ class AuthTokenAPIView(APIView):
         return Response(data)
 
 
+# 동시 접속 불가. 웹이나 모바일에서 로그아웃하면 서버에서 삭제
+class LogoutAPIView(APIView):
+    def get(self, request, format=None):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
 class CreateUserAPIView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -45,12 +52,3 @@ class CreateUserAPIView(APIView):
 
         else:
             return Response(serializer.errors)
-
-
-# 동시 접속 불가. 웹이나 모바일에서 로그아웃하면 서버에서 삭제
-class LogoutAPIView(APIView):
-    def get(self, request, format=None):
-        request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
-
-# class LoginAPIView(APIView)
