@@ -10,12 +10,11 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 import os
 import sys
-from pathlib import Path
+
 import django
 
-HOME = str(Path.home())
-PROJECT = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app')
-sys.path.insert(0,PROJECT)
+PROJECT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, PROJECT)
 #
 os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
 django.setup()
