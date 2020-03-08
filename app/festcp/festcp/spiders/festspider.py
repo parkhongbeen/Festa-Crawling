@@ -4,11 +4,10 @@ import time
 from pathlib import Path
 
 import scrapy
+from festalist.models import FestaList
 from festcp.items import FestcpItem
 from scrapy import Selector
 from selenium import webdriver
-
-from festalist.models import FestaList
 
 HOME = str(Path.home())
 CHROME_DRIVER = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app', 'festcp', 'festcp',
@@ -23,10 +22,14 @@ class QuotesSpider(scrapy.Spider):
 
     def __init__(self):
         scrapy.Spider.__init__(self)
-        try:
-            self.driver = webdriver.Chrome(executable_path=CHROME_DRIVER)
-        except:
-            self.driver = webdriver.Chrome()
+        options = webdriver.ChromeOptions()
+        options.binary_location = '/usr/bin/google-chrome-unstable'
+        options.add_argument('headless')
+        options.add_argument('no-sandbox')
+        options.add_argument('disable-gpu')
+        options.add_argument('disable-dev-shm-usage')
+        options.add_argument('window-size=1200x600')
+        self.driver = webdriver.Chrome(chrome_options=options)
 
     def parse(self, response):
         self.driver.get(response.url)
@@ -34,17 +37,11 @@ class QuotesSpider(scrapy.Spider):
 
         html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
-        details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()
+        details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()[:10]
 
-        # 비교를 위해 마지막 데이터를 가져옴
-        # last_festa = FestaList.objects.last()
-        # last_title = last_festa.title
-        # last_date = last_festa.date
-        #
-        # titles = selector.xpath('//h3[contains(@class, "Mobile")]/text()').extract()
-        # for idx, title in enumerate(titles):
-        #     if title[:-3] in last_title:
-        #         details = details[:idx]
+        events = FestaList.objects.order_by('-pk')[:10]
+        event_titles = [event.title for event in events]
+        event_dates = [event.date for event in events]
 
         details.reverse()
         for detail in details:
@@ -59,9 +56,9 @@ class QuotesSpider(scrapy.Spider):
             title = detail_selector.xpath('//h1[contains(@class, "Heading")]/text()').extract()[0]
             date = detail_selector.xpath('//div[contains(@class, "TextBlock")]/text()').extract()[1]
 
-            # 넣으려고 하는 데이터랑 기존의 마지막 데이터가 같으면 그만하도록 함
-            # if title == last_title and date == last_date:
-            #     break
+            if title in event_titles and date in event_dates:
+                if event_titles.index(title) == event_dates.index(date):
+                    continue
 
             image = detail_selector.xpath('//div[contains(@class, "MainImage")]/@src').extract()[0]
             try:
