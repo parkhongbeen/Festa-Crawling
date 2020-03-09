@@ -11,7 +11,7 @@ class FestaList(models.Model):
     image = models.CharField(max_length=150,blank=True)
     host = models.CharField(max_length=150, blank=True)
     date = models.CharField(max_length=150, blank=True)
-    content = models.CharField(max_length=150, blank=True)
+    content = models.TextField(blank=True)
     apply = models.CharField(max_length=150, blank=True)
     tickets = models.CharField(max_length=150, blank=True)
     link = models.CharField(max_length=150, blank=True)
