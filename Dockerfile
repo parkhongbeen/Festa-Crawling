@@ -36,6 +36,7 @@ RUN pip install scrapy selenium
 ############## we custom code ###############
 RUN     apt-get install vim -y
 RUN     apt -y install nginx
+RUN	apt -y install cron
 
 # 도커 컨테이너 내부 /root/ 에 .aws 폴더 생성
 RUN     mkdir /root/.aws
@@ -47,6 +48,11 @@ RUN     pip install -r /tmp/requirements.txt
 # docker container 의 /srv/에 Fest-Crawling 복사
 COPY    . /srv/Festa-crawling
 WORKDIR     /srv/Festa-crawling/app
+
+# cron 설정
+#RUN	mv cron /etc/cron.d/
+#RUN	chmod 0644 /etc/cron.d/cron
+#RUN	crontab /etc/cron.d/cron
 
 # sites-enabled/defualt파일은 welcome to nginx 파일이다
 RUN     rm /etc/nginx/sites-enabled/default

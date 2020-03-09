@@ -29,8 +29,10 @@ class QuotesSpider(scrapy.Spider):
         options.add_argument('disable-gpu')
         options.add_argument('disable-dev-shm-usage')
         options.add_argument('window-size=1200x600')
-        self.driver = webdriver.Chrome(chrome_options=options)
-
+        try:
+            self.driver = webdriver.Chrome(chrome_options=options)
+        except:
+            self.driver = webdriver.Chrome()
     def parse(self, response):
         self.driver.get(response.url)
         time.sleep(5)
