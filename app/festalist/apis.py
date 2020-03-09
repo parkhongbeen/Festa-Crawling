@@ -7,10 +7,17 @@ from festalist.serializers import FestaListSerializer, FestaListKeywordSerialize
 
 class FestaListAPIView(APIView):
     def get(self, request):
-        festalist = FestaList.objects.all()
-        serializer = FestaListSerializer(festalist, many=True)
+        pay = FestaList.objects.filter(tickets__contains="₩")
+        free = FestaList.objects.filter(tickets__contains="무료")
+        exterior = FestaList.objects.filter(tickets="")
+
+        serializer_pay = FestaListSerializer(pay, many=True)
+        serializer_free = FestaListSerializer(free, many=True)
+        serializer_exterior = FestaListSerializer(exterior, many=True)
         data = {
-            'list': serializer.data
+            '유료': serializer_pay.data,
+            '무료': serializer_free.data,
+            '외부이벤트': serializer_exterior.data
         }
         return Response(data)
 
