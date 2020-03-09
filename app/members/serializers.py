@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 
 from members.models import User
 
@@ -7,7 +6,7 @@ from members.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','email', 'username', 'password']
+        fields = ['id', 'email', 'username', 'password']
 
     def save(self, **kwargs):
         username = self.validated_data['username']
