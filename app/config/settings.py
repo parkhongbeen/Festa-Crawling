@@ -131,14 +131,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 """postgresql 사용"""
 # DATABASES = SECRETS['DATABASES']  AWS RDS Postgresql 데이터 베이스
 
-# DATABASES = SECRETS['DATABASES']
+DATABASES = SECRETS['DATABASES']
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
