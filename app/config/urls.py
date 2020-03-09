@@ -17,13 +17,13 @@ from django.urls import path, include
 
 urlpatterns_api = [
     path('members/', include('members.urls')),
+    path('festalist/',include('festalist.urls'))
 ]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(urlpatterns_api)),
+    path('', include(urlpatterns_api)),
     path('accounts/', include('allauth.urls')),
-    path('', include('festalist.urls'))
 ]
 
 
