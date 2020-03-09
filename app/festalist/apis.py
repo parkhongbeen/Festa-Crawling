@@ -1,8 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from festalist.models import FestaList, FestaListKeyword
-from festalist.serializers import FestaListSerializer, FestaListKeywordSerializer, FestaListKeywordPostSerializer
+from festalist.models import FestaList
+from festalist.serializers import FestaListSerializer
 
 
 class FestaListAPIView(APIView):

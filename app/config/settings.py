@@ -24,7 +24,7 @@ secretsManager = session.client(
     service_name='secretsmanager',
     region_name='ap-northeast-2'
 )
-SECRETS = json.loads(secretsManager.get_secret_value(SecretId='festa_smanager')['SecretString'])
+SECRETS = json.loads(secretsManager.get_secret_value(SecretId='festasm')['SecretString'])['festa']
 
 """ S3 사용을 위한 설정"""
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -131,12 +131,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 """postgresql 사용"""
 # DATABASES = SECRETS['DATABASES']  AWS RDS Postgresql 데이터 베이스
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+DATABASES = SECRETS['DATABASES']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
