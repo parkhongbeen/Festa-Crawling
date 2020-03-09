@@ -33,6 +33,7 @@ class QuotesSpider(scrapy.Spider):
             self.driver = webdriver.Chrome(chrome_options=options)
         except:
             self.driver = webdriver.Chrome()
+
     def parse(self, response):
         self.driver.get(response.url)
         time.sleep(5)
