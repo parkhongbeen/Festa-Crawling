@@ -1,4 +1,7 @@
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -38,9 +41,12 @@ class FestaListDetailAPIView(APIView):
 
 
 class FestaListKeywordUpload(APIView):
-    def get(self, request, pk):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
         try:
-            user = User.objects.get(pk=pk)
+            user = Token.objects.get(key=request.auth).user
             keywords = user.festalistkeyword_set.all()
             serializer = FestaListKeywordSerializer(keywords, many=True)
             data = {
@@ -50,11 +56,12 @@ class FestaListKeywordUpload(APIView):
         except:
             return Response(data={"detail": "존재하지 않는 사용자입니다."}, status=status.HTTP_204_NO_CONTENT)
 
-    def post(self, request, pk):
+    def post(self, request):
         try:
+            user = Token.objects.get(key=request.auth).user
             serializer = FestaListKeywordPostSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save(pk)
+                serializer.save(user.id)
                 data = {
                     'data': serializer.data
                 }
