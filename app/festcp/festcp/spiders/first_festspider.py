@@ -30,7 +30,10 @@ class QuotesSpider(scrapy.Spider):
         options.add_argument('disable-gpu')
         options.add_argument('disable-dev-shm-usage')
         options.add_argument('window-size=1200x600')
-        self.driver = webdriver.Chrome(chrome_options=options)
+        try:
+            self.driver = webdriver.Chrome(chrome_options=options)
+        except:
+            self.driver = webdriver.Chrome()
 
     def parse(self, response):
         self.driver.get(response.url)
@@ -38,7 +41,7 @@ class QuotesSpider(scrapy.Spider):
 
         # ------------------------------- 무한스크롤 -------------------------------
 
-        SCROLL_PAUSE_TIME = 2
+        SCROLL_PAUSE_TIME = 3
 
         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
@@ -57,6 +60,13 @@ class QuotesSpider(scrapy.Spider):
             last_height = new_height
 
         # ------------------------------- 무한스크롤 -------------------------------
+        database = FestaList.objects.all()
+        db_titles = []
+        db_date = []
+
+        for data in database:
+            db_titles.append(data.title)
+            db_date.append(data.date)
 
         html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
@@ -64,65 +74,72 @@ class QuotesSpider(scrapy.Spider):
 
         details.reverse()
         for detail in details:
-            tickets = []
-
-            self.driver.get('https://www.festa.io' + detail)
-            time.sleep(5)
-
-            detail_html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
-            detail_selector = Selector(text=detail_html)
-
-            title = detail_selector.xpath('//h1[contains(@class, "Heading")]/text()').extract()[0]
-            date = detail_selector.xpath('//div[contains(@class, "TextBlock")]/text()').extract()[1]
-
-            image = detail_selector.xpath('//div[contains(@class, "MainImage")]/@src').extract()[0]
             try:
-                host = detail_selector.xpath('//div[contains(@class, "HostText")]/text()').extract()[0]
-            except:  # host가 빈 값인 경우가 있어서 대비하기 위함.
-                host = ''
-            content = detail_selector.xpath('//div[contains(@class, "UserContentArea")]').extract()[0]
-            apply = detail_selector.xpath('//*[contains(@class, "ButtonNew")]/text()').extract()[0]
-            tickets_wrap = detail_selector.xpath('//div[contains(@class, "TicketWrapper")]').extract()
-            for i, ticket in enumerate(tickets_wrap):
-                if i + 1 > len(tickets_wrap) / 2:
-                    break
+                tickets = []
 
-                ticket_selector = Selector(text=ticket)
-                customer = ticket_selector.xpath('//span[contains(@class, "TicketName")]/text()').extract()[0]
-                price = ticket_selector.xpath('//span[contains(@class, "PriceSpan")]/text()').extract()[0]
-                ticket_tuple = (customer, price)
-                tickets.append(ticket_tuple)
+                self.driver.get('https://www.festa.io' + detail)
+                time.sleep(5)
 
-            tickets = ', '.join([
-                f'({ticket[0]}, {ticket[1]})' for ticket in tickets
-            ])
+                detail_html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
+                detail_selector = Selector(text=detail_html)
 
-            if apply == '이벤트 신청(외부등록)':
-                button = self.driver.find_element_by_css_selector('button')
-                self.driver.execute_script("arguments[0].click();", button)
-                self.driver.switch_to_window(self.driver.window_handles[1])
-                time.sleep(3)
-                self.driver.switch_to_window(self.driver.window_handles[0])
-                time.sleep(3)
-                self.driver.switch_to_window(self.driver.window_handles[1])  # alert 처리
-                link = self.driver.current_url
+                title = detail_selector.xpath('//h1[contains(@class, "Heading")]/text()').extract()[0]
+                date = detail_selector.xpath('//div[contains(@class, "TextBlock")]/text()').extract()[1]
 
-                self.driver.close()
-                self.driver.switch_to_window(self.driver.window_handles[0])
+                if title in db_titles:
+                    if date in db_date:
+                        continue
 
-            else:
-                link = ''
+                image = detail_selector.xpath('//div[contains(@class, "MainImage")]/@src').extract()[0]
+                try:
+                    host = detail_selector.xpath('//div[contains(@class, "HostText")]/text()').extract()[0]
+                except:  # host가 빈 값인 경우가 있어서 대비하기 위함.
+                    host = ''
+                content = detail_selector.xpath('//div[contains(@class, "UserContentArea")]').extract()[0]
+                apply = detail_selector.xpath('//*[contains(@class, "ButtonNew")]/text()').extract()[0]
+                tickets_wrap = detail_selector.xpath('//div[contains(@class, "TicketWrapper")]').extract()
+                for i, ticket in enumerate(tickets_wrap):
+                    if i + 1 > len(tickets_wrap) / 2:
+                        break
 
-            # 데이터베이스에 넣기
-            item = FestcpItem()
-            item['title'] = title
-            item['image'] = image
-            item['host'] = host
-            item['date'] = date
-            item['content'] = content
-            item['apply'] = apply
-            item['tickets'] = tickets
-            item['link'] = link
-            yield item
+                    ticket_selector = Selector(text=ticket)
+                    customer = ticket_selector.xpath('//span[contains(@class, "TicketName")]/text()').extract()[0]
+                    price = ticket_selector.xpath('//span[contains(@class, "PriceSpan")]/text()').extract()[0]
+                    ticket_tuple = (customer, price)
+                    tickets.append(ticket_tuple)
 
-        self.driver.close()
+                tickets = ', '.join([
+                    f'({ticket[0]}, {ticket[1]})' for ticket in tickets
+                ])
+
+                if apply == '이벤트 신청(외부등록)':
+                    button = self.driver.find_element_by_css_selector('button')
+                    self.driver.execute_script("arguments[0].click();", button)
+                    self.driver.switch_to_window(self.driver.window_handles[1])
+                    time.sleep(3)
+                    self.driver.switch_to_window(self.driver.window_handles[0])
+                    time.sleep(3)
+                    self.driver.switch_to_window(self.driver.window_handles[1])  # alert 처리
+                    link = self.driver.current_url
+
+                    self.driver.close()
+                    self.driver.switch_to_window(self.driver.window_handles[0])
+
+                else:
+                    link = ''
+
+                # 데이터베이스에 넣기
+                item = FestcpItem()
+                item['title'] = title
+                item['image'] = image
+                item['host'] = host
+                item['date'] = date
+                item['content'] = content
+                item['apply'] = apply
+                item['tickets'] = tickets
+                item['link'] = link
+                yield item
+            except:
+                continue
+
+        self.driver.quit()

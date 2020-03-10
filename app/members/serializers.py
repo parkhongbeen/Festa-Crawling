@@ -18,3 +18,10 @@ class UserSerializer(serializers.ModelSerializer):
             email=email
         )
         return user
+
+
+class UsernameCheckSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username']
+
