@@ -113,4 +113,4 @@ class QuotesSpider(scrapy.Spider):
             item['link'] = link
             yield item
 
-        self.driver.close()
+        self.driver.quit()
