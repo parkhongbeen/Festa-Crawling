@@ -1,1 +1,0 @@
-*/5 * * * * /srv/festa-crawl/app/festcp/spider.py >> /srv/festa-crawl/crawl_log.txt
