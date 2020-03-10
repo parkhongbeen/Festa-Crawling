@@ -21,8 +21,8 @@ class FestcpPipeline(object):
         self.driver = self.connection.cursor()
 
     def close_spider(self, spider):
-        self.driver.close()
-        self.connection.close()
+        self.driver.quit()
+        self.connection.quit()
 
     def process_item(self, item, spider):
         # festa = FestaList()
@@ -35,8 +35,13 @@ class FestcpPipeline(object):
         # festa.tickets = item['tickets']
         # festa.link = item['link']
         # festa.save()
-        self.driver.execute(
-            "insert into festalist_festalist(title, image, host, date, content, apply, tickets, link) values(%s, %s, %s, %s, %s, %s, %s, %s)",
-            (item['title'], item['image'], item['host'], item['date'], item['content'], item['apply'], item['tickets'], item['link'],))
-        self.connection.commit()
+        try:
+            self.driver.execute(
+                "insert into festalist_festalist(title, image, host, date, content, apply, tickets, link) values(%s, %s, %s, %s, %s, %s, %s, %s)",
+                (item['title'], item['image'], item['host'], item['date'], item['content'], item['apply'],
+                 item['tickets'], item['link'],))
+        except psycopg2.IntegrityError:
+            self.driver.rollback()
+        else:
+            self.connection.commit()
         return item
