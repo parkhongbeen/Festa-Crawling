@@ -5,5 +5,5 @@ from festalist.apis import FestaListAPIView, FestaListDetailAPIView, FestaListKe
 urlpatterns = [
     path('', FestaListAPIView.as_view()),
     path('<int:pk>/', FestaListDetailAPIView.as_view()),
-    path('keyword/<int:pk>/', FestaListKeywordUpload.as_view())
+    path('keyword/', FestaListKeywordUpload.as_view())
 ]
