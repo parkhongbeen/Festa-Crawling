@@ -1,7 +1,9 @@
 from django.contrib.auth import authenticate
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -47,6 +49,8 @@ class AuthTokenAPIView(APIView):
 # 동시 접속 불가. 웹이나 모바일에서 로그아웃하면 서버에서 삭제
 # 로그아웃
 class LogoutAPIView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     def get(self, request, format=None):
         request.user.auth_token.delete()
         return Response(data={"detail": "로그아웃 하셨습니다."}, status=status.HTTP_200_OK)
