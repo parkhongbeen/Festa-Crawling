@@ -5,15 +5,25 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from members.models import User
 from members.serializers import UserSerializer
+
+
+class CheckUserAPIView(APIView):
+    def get(self, request):
+        try:
+            user = User.objects.get(username=request.data['username'])
+            if user:
+                data = {'isExist': True}
+                return Response(data, status=status.HTTP_200_OK)
+        except:
+            data = {"isExist": False}
+            return Response(data)
 
 
 # 사용자로그인 --> 아이디/비번/이메일 전달 --> 유효 검사후 토큰 반환
 # 로그인
 class AuthTokenAPIView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
-
     def post(self, request):
         username = request.data['username']
         password = request.data['password']
@@ -39,7 +49,7 @@ class AuthTokenAPIView(APIView):
 class LogoutAPIView(APIView):
     def get(self, request, format=None):
         request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        return Response(data={"detail": "로그아웃 하셨습니다."}, status=status.HTTP_200_OK)
 
 
 # 회원 가입

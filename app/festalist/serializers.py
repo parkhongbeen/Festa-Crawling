@@ -7,13 +7,13 @@ from .models import FestaList, FestaListKeyword
 class FestaListSerializer(serializers.ModelSerializer):
     class Meta:
         model = FestaList
-        fields = ['title', 'host', 'date', 'content', 'apply', 'tickets', 'link', 'image']
+        fields = ['id', 'title', 'host', 'date', 'content', 'apply', 'tickets', 'link', 'image']
 
 
 class FestaListKeywordSerializer(serializers.ModelSerializer):
     class Meta:
         model = FestaListKeyword
-        fields = ['keyword', 'event']
+        fields = ['keyword']
 
 
 class FestaListKeywordPostSerializer(serializers.ModelSerializer):
