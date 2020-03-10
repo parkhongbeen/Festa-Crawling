@@ -14,7 +14,6 @@ import os
 
 import boto3
 
-
 AUTH_USER_MODEL = 'members.User'
 
 # credential --> 사용자 인증
@@ -45,7 +44,6 @@ STATICFILES_DIRS = [STATIC_DIR]
 ROOT_DIR = os.path.dirname(BASE_DIR)
 STATIC_ROOT = os.path.join(ROOT_DIR, ".static")
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
