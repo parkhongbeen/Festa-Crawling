@@ -17,7 +17,7 @@ from django.urls import path, include
 
 urlpatterns_api = [
     path('members/', include('members.urls')),
-    path('festalist/',include('festalist.urls'))
+    path('festalist/', include('festalist.urls'))
 ]
 
 urlpatterns = [
@@ -25,5 +25,3 @@ urlpatterns = [
     path('', include(urlpatterns_api)),
     path('accounts/', include('allauth.urls')),
 ]
-
-
