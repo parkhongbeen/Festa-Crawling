@@ -14,7 +14,8 @@ from members.serializers import UserSerializer
 class CheckUserAPIView(APIView):
     def get(self, request):
         try:
-            user = User.objects.get(username=request.data['username'])
+            print(request.GET['email'])
+            user = User.objects.get(email=request.GET['email'])
             if user:
                 data = {'isExist': True}
                 return Response(data, status=status.HTTP_200_OK)
@@ -29,7 +30,6 @@ class AuthTokenAPIView(APIView):
     def post(self, request):
         username = request.data['username']
         password = request.data['password']
-        # email = request.data['email']
 
         user = authenticate(username=username, password=password)
 
@@ -51,6 +51,7 @@ class AuthTokenAPIView(APIView):
 class LogoutAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         request.user.auth_token.delete()
         return Response(data={"detail": "로그아웃 하셨습니다."}, status=status.HTTP_200_OK)
@@ -63,8 +64,9 @@ class CreateUserAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             data = {
-                'user': serializer.data
+                'user': serializer.data,
+                'detail': f'{request.data["email"]}로 새로운 계정을 생성하셨습니다'
             }
             return Response(data)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
