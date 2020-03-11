@@ -19,6 +19,11 @@ class FestaList(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ['-id']
+        indexes = [
+            models.Index(fields=['id'])
+        ]
 
 class FestaListKeyword(models.Model):
     keyword = models.CharField(max_length=150, blank=True)
