@@ -13,19 +13,19 @@ class FestaListSerializer(serializers.ModelSerializer):
 class FestaListKeywordSerializer(serializers.ModelSerializer):
     class Meta:
         model = FestaListKeyword
-        fields = ['keyword']
+        fields = ['id', 'keyword']
 
 
 class FestaListKeywordPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = FestaListKeyword
-        fields = ['keyword']
+        fields = ['id', 'keyword']
 
     def save(self, *args):
         keyword = self.validated_data['keyword']
-        user1 = User.objects.get(id=int(args[0]))
+        user = User.objects.get(id=int(args[0]))
         # get_or_create 는 튜플을 돌려준다
         val = FestaListKeyword.objects.get_or_create(
             keyword=keyword
         )[0]
-        val.user.add(user1)
+        val.user.add(user)
