@@ -2,11 +2,7 @@ from django.core.paginator import Paginator
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-<<<<<<< HEAD
-from rest_framework.pagination import LimitOffsetPagination
-=======
 from rest_framework.pagination import PageNumberPagination
->>>>>>> d478261c812b082b7f33c6c6a14e09ba063b8a1b
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -47,29 +43,8 @@ class FestaListAPIView(APIView):
         return self.paginator.get_paginated_response(data)
 
     def get(self, request):
-        # def category_pagenation(category):
-        #     if category == 'pay':
-        #         instance = FestaList.objects.filter(tickets__contains="₩")
-        #     elif category == 'free':
-        #         instance = FestaList.objects.filter(tickets__contains="무료")
-        #     elif category == 'exterior':
-        #         instance = FestaList.objects.filter(tickets="")
-        #     else:
-        #         instance = FestaList.objects.all()
-        #
-        #     page = self.paginate_queryset(instance)
-        #     if page is not None:
-        #         serializer = self.get_paginated_response(self.serializer_class(page,
-        #                                                                        many=True).data)
-        #     else:
-        #         serializer = self.serializer_class(instance, many=True)
-        #
-        #     return Response(serializer.data, status=status.HTTP_200_OK)
-        #
-        # category = request.query_params.get('category')
-        # category_pagenation(category)
-
         category = request.query_params.get('category')
+
         if category == 'pay':
             instance = FestaList.objects.filter(tickets__contains="₩")
         elif category == 'free':
@@ -86,27 +61,7 @@ class FestaListAPIView(APIView):
         else:
             serializer = self.serializer_class(instance, many=True)
 
-<<<<<<< HEAD
-        # pagination_class = LimitOffsetPagination
-        # page_number = self.request.query_params.get('page_number ', 1)
-        # page_size = self.request.query_params.get('page_size ', 30)
-        # paginator = Paginator(news, page_size)
-        # serializer = FestaListSerializer(paginator.page(page_number), many=True, context={'request': request})
-        # response = Response(serializer.data, status=status.HTTP_200_OK)
-        # return response
-
-        serializer_pay = FestaListSerializer(pay, many=True)
-        serializer_free = FestaListSerializer(free, many=True)
-        serializer_exterior = FestaListSerializer(exterior, many=True)
-        data = {
-            'pay': serializer_pay.data,
-            'free': serializer_free.data,
-            'outerEvent': serializer_exterior.data
-        }
-        return Response(data)
-=======
         return Response(serializer.data, status=status.HTTP_200_OK)
->>>>>>> d478261c812b082b7f33c6c6a14e09ba063b8a1b
 
 
 class FestaListDetailAPIView(APIView):
