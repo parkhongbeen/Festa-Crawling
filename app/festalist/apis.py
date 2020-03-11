@@ -1,30 +1,87 @@
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from festalist.models import FestaList
 from festalist.serializers import FestaListSerializer, FestaListKeywordPostSerializer, FestaListKeywordSerializer
-from members.models import User
+
+
+class BasicPagination(PageNumberPagination):
+    page_size_query_param = 'size'
+    page_size = 30
 
 
 class FestaListAPIView(APIView):
-    def get(self, request):
-        pay = FestaList.objects.filter(tickets__contains="₩")
-        free = FestaList.objects.filter(tickets__contains="무료")
-        exterior = FestaList.objects.filter(tickets="")
+    pagination_class = BasicPagination
+    serializer_class = FestaListSerializer
 
-        serializer_pay = FestaListSerializer(pay, many=True)
-        serializer_free = FestaListSerializer(free, many=True)
-        serializer_exterior = FestaListSerializer(exterior, many=True)
-        data = {
-            'pay': serializer_pay.data,
-            'free': serializer_free.data,
-            'outerEvent': serializer_exterior.data
-        }
-        return Response(data)
+    @property
+    def paginator(self):
+        if not hasattr(self, '_paginator'):
+            if self.pagination_class is None:
+                self._paginator = None
+            else:
+                self._paginator = self.pagination_class()
+        else:
+            pass
+        return self._paginator
+
+    def paginate_queryset(self, queryset):
+
+        if self.paginator is None:
+            return None
+        return self.paginator.paginate_queryset(queryset,
+                                                self.request, view=self)
+
+    def get_paginated_response(self, data):
+        assert self.paginator is not None
+        return self.paginator.get_paginated_response(data)
+
+    def get(self, request):
+        # def category_pagenation(category):
+        #     if category == 'pay':
+        #         instance = FestaList.objects.filter(tickets__contains="₩")
+        #     elif category == 'free':
+        #         instance = FestaList.objects.filter(tickets__contains="무료")
+        #     elif category == 'exterior':
+        #         instance = FestaList.objects.filter(tickets="")
+        #     else:
+        #         instance = FestaList.objects.all()
+        #
+        #     page = self.paginate_queryset(instance)
+        #     if page is not None:
+        #         serializer = self.get_paginated_response(self.serializer_class(page,
+        #                                                                        many=True).data)
+        #     else:
+        #         serializer = self.serializer_class(instance, many=True)
+        #
+        #     return Response(serializer.data, status=status.HTTP_200_OK)
+        #
+        # category = request.query_params.get('category')
+        # category_pagenation(category)
+
+        category = request.query_params.get('category')
+        if category == 'pay':
+            instance = FestaList.objects.filter(tickets__contains="₩")
+        elif category == 'free':
+            instance = FestaList.objects.filter(tickets__contains="무료")
+        elif category == 'exterior':
+            instance = FestaList.objects.filter(tickets="")
+        else:
+            instance = FestaList.objects.all()
+
+        page = self.paginate_queryset(instance)
+        if page is not None:
+            serializer = self.get_paginated_response(self.serializer_class(page,
+                                                                           many=True).data)
+        else:
+            serializer = self.serializer_class(instance, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class FestaListDetailAPIView(APIView):
@@ -81,7 +138,6 @@ class FestaListKeywordDelete(APIView):
             user = Token.objects.get(key=request.auth).user
             keyword = user.festalistkeyword_set.get(id=pk)
             user.festalistkeyword_set.remove(keyword)
-            return Response(data={'data': '데이터를 삭제하였습니다.'},status=status.HTTP_200_OK)
+            return Response(data={'data': '데이터를 삭제하였습니다.'}, status=status.HTTP_200_OK)
         except:
             return Response(data={"detail": "존재하지 않는 사용자입니다."}, status=status.HTTP_204_NO_CONTENT)
-
