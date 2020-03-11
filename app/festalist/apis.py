@@ -1,6 +1,8 @@
+from django.core.paginator import Paginator
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,6 +17,14 @@ class FestaListAPIView(APIView):
         pay = FestaList.objects.filter(tickets__contains="₩")
         free = FestaList.objects.filter(tickets__contains="무료")
         exterior = FestaList.objects.filter(tickets="")
+
+        # pagination_class = LimitOffsetPagination
+        # page_number = self.request.query_params.get('page_number ', 1)
+        # page_size = self.request.query_params.get('page_size ', 30)
+        # paginator = Paginator(news, page_size)
+        # serializer = FestaListSerializer(paginator.page(page_number), many=True, context={'request': request})
+        # response = Response(serializer.data, status=status.HTTP_200_OK)
+        # return response
 
         serializer_pay = FestaListSerializer(pay, many=True)
         serializer_free = FestaListSerializer(free, many=True)
@@ -44,7 +54,7 @@ class FestaListKeywordUpload(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
+    def get(self, request, pk, format=None):
         try:
             user = Token.objects.get(key=request.auth).user
             keywords = user.festalistkeyword_set.all()
