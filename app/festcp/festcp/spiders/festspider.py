@@ -45,8 +45,9 @@ class QuotesSpider(scrapy.Spider):
         events = FestaList.objects.order_by('-pk')[:10]
         event_titles = [event.title for event in events]
         event_dates = [event.date for event in events]
-
         details.reverse()
+        # 키워드 전체를 받아옴 (keywords = FestaListKeyword.objects.all())
+        # keywords = [keyword.keyword for keyword in keywords]
         for detail in details:
             tickets = []
 
@@ -62,6 +63,13 @@ class QuotesSpider(scrapy.Spider):
             if title in event_titles and date in event_dates:
                 if event_titles.index(title) == event_dates.index(date):
                     continue
+
+            # 키워드를 받아와서 있는지 검사
+            # if keyword in keywords:
+            #    keyword 알아냈음
+            # 키워드에 연결된 유저들 (key_users = keyword.user.all()) 에게 이메일 보냄
+            # user_email = [user.useremail for user in key_users] <- to
+            # title = f'{keyword}가 등록'
 
             image = detail_selector.xpath('//div[contains(@class, "MainImage")]/@src').extract()[0]
             try:
