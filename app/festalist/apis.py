@@ -73,9 +73,8 @@ class FestaListKeywordUpload(APIView):
 
 
 class FestaListKeywordDelete(APIView):
-    """
-    여러가지 키워드가 있을건데, 키워드를 클릭하면 해당 키워드를 삭제.
-    """
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def delete(self, request, pk):
         try:
