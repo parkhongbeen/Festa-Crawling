@@ -40,9 +40,9 @@ class QuotesSpider(scrapy.Spider):
 
         html = self.driver.find_element_by_xpath('//*').get_attribute('outerHTML')
         selector = Selector(text=html)
-        details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()[:10]
+        details = selector.xpath('//div[@style]/a[contains(@class, "Mobile")]/@href').extract()
 
-        events = FestaList.objects.order_by('-pk')[:10]
+        events = FestaList.objects.order_by('-pk')[:30]
         event_titles = [event.title for event in events]
         event_dates = [event.date for event in events]
 
