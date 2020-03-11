@@ -6,7 +6,7 @@ from members.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'password']
+        fields = ['id', 'email', 'password']
 
     def save(self, **kwargs):
         password = self.validated_data['password']
