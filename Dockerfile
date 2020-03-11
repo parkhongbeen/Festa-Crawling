@@ -36,7 +36,7 @@ RUN pip install scrapy selenium
 ############## we custom code ###############
 RUN     apt-get install vim -y
 RUN     apt -y install nginx
-
+RUN	apt -y install cron
 # 도커 컨테이너 내부 /root/ 에 .aws 폴더 생성
 RUN     mkdir /root/.aws
 # requirements.txt 를 도커 컨테이너 내부에 넣음
@@ -48,6 +48,11 @@ RUN     pip install -r /tmp/requirements.txt
 COPY    . /srv/Festa-crawling
 WORKDIR     /srv/Festa-crawling/app
 
+# cron 설정
+ADD	crontab /etc/cron.d/hello-cron
+RUN	chmod 0644 /etc/cron.d/hello-cron
+RUN	touch /srv/Festa-crawling/cron.log
+
 # sites-enabled/defualt파일은 welcome to nginx 파일이다
 RUN     rm /etc/nginx/sites-enabled/default
 
@@ -55,4 +60,4 @@ RUN     rm /etc/nginx/sites-enabled/default
 RUN     cp /srv/Festa-crawling/.config/festa.nginx /etc/nginx/sites-enabled/
 
 
-CMD [ "/bin/bash" ]
+CMD	cron && tail -f /srv/Festa-crawling/cron.log
