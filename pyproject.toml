@@ -23,6 +23,7 @@ supervisor = "^4.1.0"
 selenium = "^3.141.0"
 scrapy-djangoitem = "^1.1.1"
 django-allauth = "^0.41.0"
+django-cors-headers = "^3.2.1"
 
 [tool.poetry.dev-dependencies]
 
