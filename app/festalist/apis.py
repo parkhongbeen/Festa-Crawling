@@ -80,3 +80,19 @@ class FestaListKeywordUpload(APIView):
                 return Response(serializer.errors)
         except:
             return Response(data={"detail": "존재하지 않는 사용자입니다."}, status=status.HTTP_204_NO_CONTENT)
+
+
+class FestaListKeywordDelete(APIView):
+    """
+    여러가지 키워드가 있을건데, 키워드를 클릭하면 해당 키워드를 삭제.
+    """
+
+    def delete(self, request, pk):
+        try:
+            user = Token.objects.get(key=request.auth).user
+            keyword = user.festalistkeyword_set.get(id=pk)
+            user.festalistkeyword_set.remove(keyword)
+            return Response(data={'data': '데이터를 삭제하였습니다.'},status=status.HTTP_200_OK)
+        except:
+            return Response(data={"detail": "존재하지 않는 사용자입니다."}, status=status.HTTP_204_NO_CONTENT)
+
