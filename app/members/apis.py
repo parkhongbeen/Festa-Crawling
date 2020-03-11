@@ -14,7 +14,6 @@ from members.serializers import UserSerializer
 class CheckUserAPIView(APIView):
     def get(self, request):
         try:
-            print(request.GET['email'])
             user = User.objects.get(email=request.GET['email'])
             if user:
                 data = {'isExist': True}
@@ -28,10 +27,10 @@ class CheckUserAPIView(APIView):
 # 로그인
 class AuthTokenAPIView(APIView):
     def post(self, request):
-        username = request.data['username']
+        email = request.data['email']
         password = request.data['password']
 
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
 
         if user:
             token, _ = Token.objects.get_or_create(user=user)
