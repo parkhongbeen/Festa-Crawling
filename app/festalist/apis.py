@@ -42,18 +42,6 @@ class FestaListAPIView(APIView):
         return self.paginator.get_paginated_response(data)
 
     def get(self, request):
-        try:
-            user = Token.objects.get(key=request.auth).user
-            userinfo = {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email
-            }
-        except:
-            userinfo = {
-                "user": []
-            }
-
         category = request.query_params.get('category')
 
         if category == 'pay':
@@ -73,7 +61,6 @@ class FestaListAPIView(APIView):
             serializer = self.serializer_class(instance, many=True)
 
         data = {
-            "user": userinfo,
             "data": serializer.data
         }
 
