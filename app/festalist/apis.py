@@ -48,7 +48,7 @@ class FestaListAPIView(APIView):
         if category == 'pay':
             instance = FestaList.objects.filter(tickets__contains="₩").exclude(tickets__contains="무료")
         elif category == 'free':
-            instance = FestaList.objects.filter(tickets__contains="무료")
+            instance = FestaList.objects.filter(tickets__contains="무료").exclude(tickets__contains="₩")
         elif category == 'exterior':
             instance = FestaList.objects.filter(tickets="[]")
         else:
