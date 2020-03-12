@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from festalist.models import FestaList
-from festalist.serializers import FestaListSerializer, FestaListKeywordPostSerializer, FestaListKeywordSerializer
+from festalist.serializers import FestaListSerializer, FestaListKeywordPostSerializer, FestaListKeywordSerializer, \
+    FestaListKeywordDeleteSerializer
 
 
 class BasicPagination(PageNumberPagination):
@@ -60,11 +61,7 @@ class FestaListAPIView(APIView):
         else:
             serializer = self.serializer_class(instance, many=True)
 
-        data = {
-            "data": serializer.data
-        }
-
-        return Response(data=data, status=status.HTTP_200_OK)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class FestaListDetailAPIView(APIView):
@@ -73,7 +70,7 @@ class FestaListDetailAPIView(APIView):
             festalist = FestaList.objects.get(pk=pk)
             serializer = FestaListSerializer(festalist)
             data = {
-                'listDetail': serializer.data
+                'detail': serializer.data
             }
             return Response(data)
         except:
@@ -106,7 +103,7 @@ class FestaListKeywordUpload(APIView):
                 keywords = user.festalistkeyword_set.all()
                 return_serializer = FestaListKeywordSerializer(keywords, many=True)
                 data = {
-                    'data': return_serializer.data
+                    'keywords': return_serializer.data
                 }
                 return Response(data)
             else:
@@ -124,6 +121,9 @@ class FestaListKeywordDelete(APIView):
             user = Token.objects.get(key=request.auth).user
             keyword = user.festalistkeyword_set.get(id=pk)
             user.festalistkeyword_set.remove(keyword)
-            return Response(data={'data': '데이터를 삭제하였습니다.'}, status=status.HTTP_200_OK)
+            keywords = user.festalistkeyword_set.all()
+            serializer = FestaListKeywordDeleteSerializer(keywords, many=True)
+            print(keyword)
+            return Response(data={'keywords': serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response(data={"detail": "존재하지 않는 사용자입니다."}, status=status.HTTP_204_NO_CONTENT)

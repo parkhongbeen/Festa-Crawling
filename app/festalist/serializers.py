@@ -29,3 +29,9 @@ class FestaListKeywordPostSerializer(serializers.ModelSerializer):
             keyword=keyword
         )[0]
         val.user.add(user)
+
+
+class FestaListKeywordDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FestaListKeyword
+        fields = ['id', 'keyword']
