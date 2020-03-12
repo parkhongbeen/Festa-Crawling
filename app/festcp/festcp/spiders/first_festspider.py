@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import time
 from pathlib import Path
@@ -24,16 +25,16 @@ class QuotesSpider(scrapy.Spider):
     def __init__(self):
         scrapy.Spider.__init__(self)
         options = webdriver.ChromeOptions()
-        options.binary_location = '/usr/bin/google-chrome-unstable'
         options.add_argument('headless')
         options.add_argument('no-sandbox')
         options.add_argument('disable-gpu')
         options.add_argument('disable-dev-shm-usage')
         options.add_argument('window-size=1200x600')
         try:
-            self.driver = webdriver.Chrome(chrome_options=options)
+            self.driver = webdriver.Chrome('chromedriver', chrome_options=options)
         except:
-            self.driver = webdriver.Chrome()
+            options.binary_location = '/usr/bin/google-chrome-unstable'
+            self.driver = webdriver.Chrome(chrome_options=options)
 
     def parse(self, response):
         self.driver.get(response.url)
@@ -98,19 +99,26 @@ class QuotesSpider(scrapy.Spider):
                 content = detail_selector.xpath('//div[contains(@class, "UserContentArea")]').extract()[0]
                 apply = detail_selector.xpath('//*[contains(@class, "ButtonNew")]/text()').extract()[0]
                 tickets_wrap = detail_selector.xpath('//div[contains(@class, "TicketWrapper")]').extract()
-                for i, ticket in enumerate(tickets_wrap):
-                    if i + 1 > len(tickets_wrap) / 2:
-                        break
+                if tickets_wrap:
+                    for i, ticket in enumerate(tickets_wrap):
+                        if i + 1 > len(tickets_wrap) / 2:
+                            break
 
-                    ticket_selector = Selector(text=ticket)
-                    customer = ticket_selector.xpath('//span[contains(@class, "TicketName")]/text()').extract()[0]
-                    price = ticket_selector.xpath('//span[contains(@class, "PriceSpan")]/text()').extract()[0]
-                    ticket_tuple = (customer, price)
-                    tickets.append(ticket_tuple)
+                        ticket_selector = Selector(text=ticket)
+                        customer = ticket_selector.xpath('//span[contains(@class, "TicketName")]/text()').extract()[0]
+                        price = ticket_selector.xpath('//span[contains(@class, "PriceSpan")]/text()').extract()[0]
+                        ticket_dict = {
+                            'name': customer,
+                            'price': price
+                        }
+                        ticket_str = json.dumps(ticket_dict, ensure_ascii=False)
+                        tickets.append(ticket_str)
 
                 tickets = ', '.join([
-                    f'({ticket[0]}, {ticket[1]})' for ticket in tickets
+                    f'{ticket}' for ticket in tickets
                 ])
+
+                tickets = f'[{tickets}]'
 
                 if apply == '이벤트 신청(외부등록)':
                     button = self.driver.find_element_by_css_selector('button')
