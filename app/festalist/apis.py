@@ -102,8 +102,11 @@ class FestaListKeywordUpload(APIView):
             serializer = FestaListKeywordPostSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(user.id)
+
+                keywords = user.festalistkeyword_set.all()
+                return_serializer = FestaListKeywordSerializer(keywords, many=True)
                 data = {
-                    'data': serializer.data
+                    'data': return_serializer.data
                 }
                 return Response(data)
             else:
