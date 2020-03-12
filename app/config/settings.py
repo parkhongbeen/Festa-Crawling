@@ -106,7 +106,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = [
-    'http://festa.s3-website.ap-northeast-2.amazonaws.com/signin',
+    'http://festa.s3-website.ap-northeast-2.amazonaws.com',
     'http://localhost:3000',
     'http://localhost:8000',
 ]
