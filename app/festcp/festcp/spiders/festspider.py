@@ -4,12 +4,12 @@ import time
 from pathlib import Path
 
 import scrapy
-from festalist.models import FestaList, FestaListKeyword
-from festcp.items import FestcpItem
+from django.core.mail import EmailMessage
 from scrapy import Selector
 from selenium import webdriver
-from django.core.mail import EmailMessage
 
+from festalist.models import FestaList, FestaListKeyword
+from festcp.items import FestcpItem
 
 HOME = str(Path.home())
 CHROME_DRIVER = os.path.join(HOME, 'projects', 'wps12th', 'Festa-Crawling', 'app', 'festcp', 'festcp',
@@ -66,13 +66,6 @@ class QuotesSpider(scrapy.Spider):
                 if event_titles.index(title) == event_dates.index(date):
                     continue
 
-            # def Send_Eamil(reqeust):
-            #     user_email = [user.useremail for user in key_users]
-            #     email = EmailMessage(
-            #         f'{reqeust.user}님께서 찜해놓으신 {keyword}가 등록되어 메일 발송해드립니다.', #메시지내용
-            #         to=[user_email], #메시지수신인
-            #     )
-            #     email.send()
 
             # 키워드를 받아와서 있는지 검사
             # if keyword in keywords:
