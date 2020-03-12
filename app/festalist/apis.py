@@ -81,7 +81,7 @@ class FestaListKeywordUpload(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, pk, format=None):
+    def get(self, request, format=None):
         try:
             user = Token.objects.get(key=request.auth).user
             keywords = user.festalistkeyword_set.all()
