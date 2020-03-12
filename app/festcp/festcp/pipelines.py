@@ -24,21 +24,7 @@ class FestcpPipeline(object):
         self.connection.quit()
 
     def process_item(self, item, spider):
-        # festa = FestaList()
-        # festa.title = item['title']
-        # festa.image = item['image']
-        # festa.host = item['host']
-        # festa.date = item['date']
-        # festa.content = item['content']
-        # festa.apply = item['apply']
-        # festa.tickets = item['tickets']
-        # festa.link = item['link']
-        # festa.save()
         try:
-            self.driver.execute(
-                "insert into festalist_festalist(title, image, host, date, content, apply, tickets, link) values(%s, %s, %s, %s, %s, %s, %s, %s)",
-                (item['title'], item['image'], item['host'], item['date'], item['content'], item['apply'],
-                 item['tickets'], item['link'],))
             email_list = []
             keywords = FestaListKeyword.objects.all()
             for keyword in keywords:
@@ -56,6 +42,15 @@ class FestcpPipeline(object):
                 email.send()
 
             Send_Email(email_list)
+
+        except:
+            pass
+
+        try:
+            self.driver.execute(
+                "insert into festalist_festalist(title, image, host, date, content, apply, tickets, link) values(%s, %s, %s, %s, %s, %s, %s, %s)",
+                (item['title'], item['image'], item['host'], item['date'], item['content'], item['apply'],
+                 item['tickets'], item['link'],))
         except psycopg2.IntegrityError:
             self.driver.rollback()
         else:
