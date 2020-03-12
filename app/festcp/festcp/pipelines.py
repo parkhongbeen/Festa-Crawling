@@ -50,13 +50,11 @@ class FestcpPipeline(object):
             email_list = list(set(email_list))
 
             def Send_Email(self, users):
-                email_list = users
-
                 email = EmailMessage(
                     f'festacrawling.xyz에서 보내드립니다.',  # 메시지 타이틀
                     f'찜해놓으신 keyword 가 등록되어 메일 발송해드립니다.'
                     f'홈페이지에 들어오셔서 확인 부탁드립니다.',
-                    to=email_list,  # 메시지수신인
+                    to=users,  # 메시지수신인
                 )
                 email.send()
 
