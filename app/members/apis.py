@@ -69,3 +69,16 @@ class CreateUserAPIView(APIView):
             return Response(data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetUserInfoAPIView(APIView):
+    def get(self, request):
+        user = Token.objects.get(key=request.auth).user
+        data = {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email
+            }
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
