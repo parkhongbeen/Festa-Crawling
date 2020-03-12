@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import psycopg2
+from django.core.mail import EmailMessage
 
 from config.settings import DATABASES
 
@@ -40,6 +41,18 @@ class FestcpPipeline(object):
                 "insert into festalist_festalist(title, image, host, date, content, apply, tickets, link) values(%s, %s, %s, %s, %s, %s, %s, %s)",
                 (item['title'], item['image'], item['host'], item['date'], item['content'], item['apply'],
                  item['tickets'], item['link'],))
+
+            def Send_Eamil(request, keyword):
+                user_email = [user.useremail for user in key_users]
+                email = EmailMessage(
+                    'festacrawling에서 보내드립니다.',
+                    f'{request.user}님께서 찜해놓으신 {keyword}가 등록되어 메일 발송해드립니다.'
+                    f'홈페이지에 들어오셔서 확인부탁드립니다.', #메시지타이틀
+                    to=[user_email], #메시지수신인
+                )
+                email.send()
+
+
         except psycopg2.IntegrityError:
             self.driver.rollback()
         else:

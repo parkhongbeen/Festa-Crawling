@@ -66,21 +66,6 @@ class QuotesSpider(scrapy.Spider):
                 if event_titles.index(title) == event_dates.index(date):
                     continue
 
-            # def Send_Eamil(reqeust):
-            #     user_email = [user.useremail for user in key_users]
-            #     email = EmailMessage(
-            #         f'{reqeust.user}님께서 찜해놓으신 {keyword}가 등록되어 메일 발송해드립니다.', #메시지내용
-            #         to=[user_email], #메시지수신인
-            #     )
-            #     email.send()
-
-            # 키워드를 받아와서 있는지 검사
-            # if keyword in keywords:
-            #    keyword 알아냈음
-            # 키워드에 연결된 유저들 (key_users = keyword.user.all()) 에게 이메일 보냄
-            # user_email = [user.useremail for user in key_users] <- to
-            # title = f'{keyword}가 등록'
-
             image = detail_selector.xpath('//div[contains(@class, "MainImage")]/@src').extract()[0]
             try:
                 host = detail_selector.xpath('//div[contains(@class, "HostText")]/text()').extract()[0]
