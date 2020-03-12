@@ -20,9 +20,9 @@ class FestaList(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['-id']
+        ordering = ['-date', 'id']
         indexes = [
-            models.Index(fields=['id'])
+            models.Index(fields=['date', 'id'])
         ]
 
 class FestaListKeyword(models.Model):
