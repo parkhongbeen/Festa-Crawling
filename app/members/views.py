@@ -43,10 +43,10 @@ def logout_view(request):
     return redirect('member:login')
 
 
-def Send_Eamil(reqeust):
-    email = EmailMessage(
-        'festa홈페이지에서 보내드립니다.',
-        'test4',
-        to=['pack122@naver.com', 'dhgudrms12@naver.com', 'dohyeonee95@hotmail.com', 'ghks130@naver.com'],
-    )
-    email.send()
+# def Send_Eamil(reqeust):
+#     email = EmailMessage(
+#         'festa홈페이지에서 보내드립니다.',
+#         'test4',
+#         to=['pack122@naver.com', 'dhgudrms12@naver.com', 'dohyeonee95@hotmail.com', 'ghks130@naver.com'],
+#     )
+#     email.send()

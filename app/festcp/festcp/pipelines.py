@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-
 import psycopg2
 from django.core.mail import EmailMessage
-
 from config.settings import DATABASES
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 from festalist.models import FestaListKeyword
-
-
 class FestcpPipeline(object):
     def open_spider(self, spider):
         hostname = DATABASES['default']['HOST']
@@ -19,11 +15,9 @@ class FestcpPipeline(object):
         database = DATABASES['default']['NAME']
         self.connection = psycopg2.connect(host=hostname, user=username, password=password, dbname=database)
         self.driver = self.connection.cursor()
-
     def close_spider(self, spider):
         self.driver.quit()
         self.connection.quit()
-
     def process_item(self, item, spider):
         # festa = FestaList()
         # festa.title = item['title']
@@ -40,15 +34,12 @@ class FestcpPipeline(object):
                 "insert into festalist_festalist(title, image, host, date, content, apply, tickets, link) values(%s, %s, %s, %s, %s, %s, %s, %s)",
                 (item['title'], item['image'], item['host'], item['date'], item['content'], item['apply'],
                  item['tickets'], item['link'],))
-
             email_list = []
             keywords = FestaListKeyword.objects.all()
             for keyword in keywords:
                 if keyword in item['title']:
                     email_list += [a.email for a in keyword.user.iterator()]
-
             email_list = list(set(email_list))
-
             def Send_Email(self, users):
                 email = EmailMessage(
                     f'festacrawling.xyz에서 보내드립니다.',  # 메시지 타이틀
@@ -57,9 +48,7 @@ class FestcpPipeline(object):
                     to=users,  # 메시지수신인
                 )
                 email.send()
-
             Send_Email(email_list)
-
         except psycopg2.IntegrityError:
             self.driver.rollback()
         else:
