@@ -127,3 +127,13 @@ class FestaListKeywordDelete(APIView):
             return Response(data={'keywords': serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response(data={"detail": "존재하지 않는 사용자입니다."}, status=status.HTTP_204_NO_CONTENT)
+
+# 이메일발송 테스트용
+# class FestaListOpenEventAPIView(APIView):
+#     def post(self, request):
+#         serializer = FestaListOpenEventSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(data=serializer.data, status=status.HTTP_200_OK)
+#         else:
+#             return Response(serializer.errors)

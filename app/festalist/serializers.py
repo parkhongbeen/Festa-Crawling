@@ -35,3 +35,21 @@ class FestaListKeywordDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = FestaListKeyword
         fields = ['id', 'keyword']
+
+# 이메일발송 테스트용
+# class FestaListOpenEventSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = FestaList
+#         fields = ['title', 'host', 'date', 'content', 'apply', 'tickets', 'link', 'image']
+#
+#     def save(self):
+#         FestaList.objects.create(
+#             title=self.validated_data['title'],
+#             host=self.validated_data['host'],
+#             date=self.validated_data['date'],
+#             content=self.validated_data['content'],
+#             apply=self.validated_data['apply'],
+#             tickets=self.validated_data['tickets'],
+#             link=self.validated_data['link'],
+#             image=self.validated_data['image'],
+#         )
