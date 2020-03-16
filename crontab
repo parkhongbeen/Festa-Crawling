@@ -1,1 +1,2 @@
 */30 * * * * root /srv/Festa-crawling/app/festcp/spider.py >> /srv/Festa-crawling/cron.log 2>&1
+0 */6 * * * root /srv/Festa-crawling/clean_db.py >> /srv/Festa-crawling/db.log 2>&1

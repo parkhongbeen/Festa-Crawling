@@ -37,6 +37,7 @@ RUN pip install scrapy selenium
 RUN     apt-get install vim -y
 RUN     apt -y install nginx
 RUN	apt -y install cron
+RUN	apt -y install postgresql
 # 도커 컨테이너 내부 /root/ 에 .aws 폴더 생성
 RUN     mkdir /root/.aws
 # requirements.txt 를 도커 컨테이너 내부에 넣음
