@@ -17,10 +17,10 @@ class FestcpPipeline(object):
         password = DATABASES['default']['PASSWORD']
         database = DATABASES['default']['NAME']
         self.connection = psycopg2.connect(host=hostname, user=username, password=password, dbname=database)
-        self.driver = self.connection.cursor()
+        self.conn = self.connection.cursor()
 
     def close_spider(self, spider):
-        self.driver.quit()
+        self.conn.quit()
         self.connection.quit()
 
     def process_item(self, item, spider):
@@ -47,12 +47,12 @@ class FestcpPipeline(object):
             pass
 
         try:
-            self.driver.execute(
+            self.conn.execute(
                 "insert into festalist_festalist(title, image, host, date, content, apply, tickets, link) values(%s, %s, %s, %s, %s, %s, %s, %s)",
                 (item['title'], item['image'], item['host'], item['date'], item['content'], item['apply'],
                  item['tickets'], item['link'],))
         except psycopg2.IntegrityError:
-            self.driver.rollback()
+            self.conn.rollback()
         else:
             self.connection.commit()
         return item
