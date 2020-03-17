@@ -20,8 +20,8 @@ class FestcpPipeline(object):
         self.conn = self.connection.cursor()
 
     def close_spider(self, spider):
-        self.conn.quit()
-        self.connection.quit()
+        self.conn.close()
+        self.connection.close()
 
     def process_item(self, item, spider):
         try:
