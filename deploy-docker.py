@@ -21,7 +21,7 @@ DOCKER_OPTIONS = [
     ('-p', '80:80'),
     ('-p', '443:443'),
     ('--name', 'festa_container'),
-    ('-v', '/etc/letsencrypt:/etc/letsencrypt'),  # 폴더를 공유하는것, 컨테이너 밖에서도 사용하게 해주는 기
+    ('-v', '/etc/letsencrypt:/etc/letsencrypt'),  # 폴더를 공유하는것, 컨테이너 밖에서도 사용하게 해주는 기능
 ]
 
 

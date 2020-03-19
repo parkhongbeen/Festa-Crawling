@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 import json
 import os
-
 import boto3
 
 AUTH_USER_MODEL = 'members.User'
@@ -23,6 +22,7 @@ secretsManager = session.client(
     service_name='secretsmanager',
     region_name='ap-northeast-2'
 )
+
 SECRETS = json.loads(secretsManager.get_secret_value(SecretId='festasm')['SecretString'])['festa']
 
 """ S3 사용을 위한 설정"""
